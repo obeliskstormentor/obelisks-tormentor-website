@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: https://obelisks-tormentor-website.obeliskstormentordc666.workers.dev/sitemap.xml
