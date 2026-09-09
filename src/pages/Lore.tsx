@@ -53,6 +53,24 @@ export default function Lore() {
             Fac Fixum Volatile et Volatile Fixum
           </p>
         </Reveal>
+
+        <Reveal delay={40} className="mt-28">
+          <h2 className="text-center text-xs uppercase tracking-[0.5em] text-gold">Milestones</h2>
+          <div className="mx-auto mt-10 max-w-sm border border-stone/60 bg-charcoal/40 p-6 text-center">
+            <img
+              src="/images/hammerclash-live-curation-2025.jpg"
+              alt="OBELISK'S TORMENTOR selected for Hammerclash Live Curation, Semarang"
+              loading="lazy"
+              className="mx-auto w-full max-w-[220px] border border-stone/60"
+            />
+            <p className="mt-5 font-body text-base italic leading-relaxed text-parchment-dim">
+              Selected for Hammerclash Live Curation — Semarang, 23 August 2025.
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-widest text-sand">
+              Hammersonic Records × Ravel Entertainment
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
