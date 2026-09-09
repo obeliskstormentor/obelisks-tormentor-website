@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ancient / dark / mysterious palette — see band/visual-direction.md */
+  --color-void: #0a0908;
+  --color-charcoal: #16140f;
+  --color-stone: #332d24;
+  --color-stone-light: #4a4133;
+  --color-sand: #8f8267;
+  --color-parchment: #d9cdb0;
+  --color-parchment-dim: #b8ac93;
+  --color-bronze: #8a6a3f;
+  --color-gold: #a9803f;
+  --color-blood: #5c1f1f;
+  --color-blood-bright: #7c2b2b;
+
+  --font-heading: "Cinzel", ui-serif, Georgia, serif;
+  --font-body: "EB Garamond", ui-serif, Georgia, serif;
+
+  --animate-fade-up: fade-up 1s ease-out both;
+  --animate-flicker: flicker 6s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    45% { opacity: 0.92; }
+    50% { opacity: 0.78; }
+    55% { opacity: 0.94; }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-void text-parchment font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading font-normal tracking-wide text-parchment;
+  }
+  a {
+    @apply transition-colors duration-300;
+  }
+  ::selection {
+    @apply bg-blood text-parchment;
+  }
+}
+
+@layer utilities {
+  .text-shadow-ember {
+    text-shadow: 0 0 20px rgba(169, 128, 63, 0.35);
+  }
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .dust-mote {
+    position: absolute;
+    bottom: -10px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, var(--color-sand) 0%, transparent 70%);
+    opacity: 0;
+    animation: dust-rise var(--dust-duration) linear var(--dust-delay) infinite;
+  }
+}
+
+@keyframes dust-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--dust-opacity);
+  }
+  92% {
+    opacity: var(--dust-opacity);
+  }
+  100% {
+    transform: translate(var(--dust-drift), -110vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

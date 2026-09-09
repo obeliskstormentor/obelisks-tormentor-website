@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: replace https://TODO-DOMAIN.example with the real deployed domain once known -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://TODO-DOMAIN.example/</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/music</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/music/glyph</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/music/inventia-hominum</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/music/savior-complex</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/lore</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/band</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/media</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/merch</loc></url>
+  <url><loc>https://TODO-DOMAIN.example/contact</loc></url>
+</urlset>
