@@ -7,7 +7,7 @@ const downloads = [
   {
     label: "Electronic Press Kit",
     sub: "PDF · bio, photos, discography",
-    href: "/epk/OBELISKS-TORMENTOR-EPK.pdf",
+    href: "/epk/OBELISKS-TORMENTOR-EPK-PUBLIC.pdf",
   },
   {
     label: "Booking Dossier (Bahasa Indonesia)",
