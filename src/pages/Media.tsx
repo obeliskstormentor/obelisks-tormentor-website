@@ -24,6 +24,12 @@ const liveImages = [
   { src: "/images/live/live-group-backstage.webp", alt: "OBELISK'S TORMENTOR backstage" },
 ]
 
+const videos = [
+  { id: "WK_vaRPFmnc", title: "Undead Knox (Official Music Video)" },
+  { id: "ybpw64F57a4", title: "Apithano (Official Video)" },
+  { id: "Wy6SohitLSM", title: "Live at Metal Blora Bersatu #11" },
+]
+
 const allImages = [...artworkImages, ...liveImages]
 
 export default function Media() {
@@ -78,6 +84,27 @@ export default function Media() {
                   className="aspect-square w-full border border-stone/60 object-cover transition hover:opacity-80"
                 />
               </button>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={40}>
+          <h2 className="mt-16 text-xl uppercase tracking-widest text-sand">Videos</h2>
+        </Reveal>
+        <div className="mt-6 grid gap-6 sm:grid-cols-3">
+          {videos.map((v, i) => (
+            <Reveal key={v.id} delay={i * 60}>
+              <div className="aspect-video w-full border border-stone/60 bg-charcoal">
+                <iframe
+                  className="h-full w-full"
+                  src={`https://www.youtube-nocookie.com/embed/${v.id}`}
+                  title={v.title}
+                  loading="lazy"
+                  allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <p className="mt-2 text-sm text-parchment-dim">{v.title}</p>
             </Reveal>
           ))}
         </div>
