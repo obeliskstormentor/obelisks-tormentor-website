@@ -7,7 +7,6 @@ const artworkImages = [
   { src: "/images/cover-glyph.jpg", alt: "Glyph cover art" },
   { src: "/images/cover-inventia-hominum.jpg", alt: "Inventia Hominum cover art" },
   { src: "/images/cover-savior-complex.jpg", alt: "Savior Complex cover art" },
-  { src: "/images/band-photo.jpg", alt: "OBELISK'S TORMENTOR band photo" },
 ]
 
 const liveImages = [
