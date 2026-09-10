@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import SocialLinks from "./SocialLinks"
 
 export default function Footer() {
@@ -14,9 +15,14 @@ export default function Footer() {
           </div>
           <SocialLinks />
         </div>
-        <p className="mt-10 text-xs tracking-wide text-sand/70">
-          &copy; {year} OBELISK'S TORMENTOR. All rights reserved.
-        </p>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-xs tracking-wide text-sand/70">
+            &copy; {year} OBELISK'S TORMENTOR. All rights reserved.
+          </p>
+          <Link to="/epk" className="text-xs uppercase tracking-widest text-sand hover:text-gold">
+            Press Kit
+          </Link>
+        </div>
       </div>
     </footer>
   )

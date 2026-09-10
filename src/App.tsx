@@ -4,6 +4,7 @@ import Footer from "./components/Footer"
 import Header from "./components/Header"
 import Band from "./pages/Band"
 import Contact from "./pages/Contact"
+import EPK from "./pages/EPK"
 import Home from "./pages/Home"
 import Lore from "./pages/Lore"
 import Media from "./pages/Media"
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/media" element={<Media />} />
           <Route path="/merch" element={<Merch />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/epk" element={<EPK />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
