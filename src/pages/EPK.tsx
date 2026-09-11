@@ -11,13 +11,13 @@ const downloads = [
   },
   {
     label: "Booking Dossier (Bahasa Indonesia)",
-    sub: "DOCX · rates, technical requirements",
-    href: "/epk/OBELISKS_TORMENTOR_BOOKING_EPK_2026_BAHASA_INDONESIA.docx",
+    sub: "PDF · rates, technical requirements",
+    href: "/epk/OBELISKS_TORMENTOR_BOOKING_EPK_2026_BAHASA_INDONESIA.pdf",
   },
   {
     label: "Booking Dossier (English)",
-    sub: "DOCX · rates, technical requirements",
-    href: "/epk/OBELISKS_TORMENTOR_BOOKING_EPK_2026_ENGLISH.docx",
+    sub: "PDF · rates, technical requirements",
+    href: "/epk/OBELISKS_TORMENTOR_BOOKING_EPK_2026_ENGLISH.pdf",
   },
 ]
 
