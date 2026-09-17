@@ -20,9 +20,6 @@ export default function ComingSoonCard({ label = "Artifact II" }: { label?: stri
           className="h-full w-full scale-110 object-cover opacity-25 brightness-[0.35] grayscale"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-void via-void/40 to-void/70" aria-hidden="true" />
-        <span className="absolute left-3 top-3 font-heading text-xs uppercase tracking-[0.2em] text-sand">
-          {label}
-        </span>
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="animate-flicker font-heading text-xs tracking-[0.4em] text-sand">
             COMING SOON
@@ -33,7 +30,9 @@ export default function ComingSoonCard({ label = "Artifact II" }: { label?: stri
         <h3 className="font-heading text-lg tracking-wide text-stone-light">???</h3>
         <span className="shrink-0 text-xs uppercase tracking-[0.2em] text-sand/70">TBA</span>
       </div>
-      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-sand/70">album</p>
+      {/* Matches ReleaseCard: designation below the art, not over it. Dimmed
+          because this release is not announced yet. */}
+      <p className="mt-1 font-heading text-xs uppercase tracking-[0.2em] text-gold/70">{label}</p>
     </div>
   )
 }

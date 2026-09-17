@@ -16,9 +16,6 @@ export default function ReleaseCard({ release }: { release: Release }) {
           className="aspect-square w-full object-cover grayscale-[15%] transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/80 via-void/0 to-void/0" />
-        <span className="absolute left-3 top-3 font-heading text-xs uppercase tracking-[0.2em] text-sand">
-          {releaseLabel(release)}
-        </span>
       </div>
       <div className="mt-4 flex items-baseline justify-between gap-3 border-b border-transparent pb-1 group-hover:border-gold/50">
         <h3 className="font-heading text-lg tracking-wide text-parchment group-hover:text-gold">
@@ -28,8 +25,15 @@ export default function ReleaseCard({ release }: { release: Release }) {
           {release.year}
         </span>
       </div>
-      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-sand">
-        {release.type}
+      {/*
+        The designation sits here rather than over the artwork: every cover has
+        the band's own wordmark across the top, so a corner label collided with
+        it on all three releases, and the white Glyph sleeve left sand text
+        unreadable. On the void background it needs no scrim, and it replaces
+        the old type line ("single") which said the same thing as "Fragment".
+      */}
+      <p className="mt-1 font-heading text-xs uppercase tracking-[0.2em] text-gold">
+        {releaseLabel(release)}
       </p>
     </Link>
   )
