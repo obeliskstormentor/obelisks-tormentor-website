@@ -1,20 +1,25 @@
 import DustParticles from "../components/DustParticles"
 import Reveal from "../components/Reveal"
 
+// Named after the releases they belong to, matching the Music page. "Fear Not
+// The Death" is the phrase printed on the back of the Savior Complex shirts,
+// not a separate design, so both now carry the release name instead.
 const merch = [
   {
-    name: "Fear Not The Death",
-    image: "/images/merch/tshirt-fear-not-the-death.jpg",
+    name: "Savior Complex",
+    image: "/images/merch/tshirt-savior-complex.jpg",
     price: "Rp130.000",
+  },
+  {
+    // Replaces the Inventia back view, which showed the same shirt as the entry
+    // below it from the other side rather than a second product.
+    name: "Savior Complex — Long Sleeve",
+    image: "/images/merch/longsleeve-savior-complex.jpg",
+    material: "Cotton Combed 24s Premium, sablon",
   },
   {
     name: "Inventia Hominum",
     image: "/images/merch/tshirt-inventia-hominum.webp",
-    material: "Cotton Combed 24s Premium, sablon",
-  },
-  {
-    name: "Obelisk's Tormentor",
-    image: "/images/merch/tshirt-anubis.webp",
   },
 ]
 
