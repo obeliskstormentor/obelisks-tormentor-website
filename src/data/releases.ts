@@ -121,3 +121,22 @@ RESILIENT AB INFERNO`,
 export function getReleaseById(id: string): Release | undefined {
   return releases.find((r) => r.id === id)
 }
+
+const numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
+
+/**
+ * The band's designation for a release: albums are numbered Artifacts, anything
+ * shorter is an unnumbered Fragment.
+ *
+ * Numbering counts albums only, and deliberately NOT the position in this array.
+ * The singles are folded into the album that collects them and then drop off the
+ * site, so an index-based numeral would silently renumber every earlier release
+ * and make old posts and screenshots wrong. "Fragment" also comes from the Lore
+ * page's own wording ("Fragments remain"), so a single being absorbed later
+ * reads as intended rather than as deletion.
+ */
+export function releaseLabel(release: Release): string {
+  if (release.type !== "album") return "Fragment"
+  const n = releases.filter((r) => r.type === "album").findIndex((r) => r.id === release.id)
+  return `Artifact ${numerals[n] ?? n + 1}`
+}

@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
+import { releaseLabel } from "../data/releases"
 import type { Release } from "../data/types"
 
-const numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
-
-export default function ReleaseCard({ release, index }: { release: Release; index: number }) {
+export default function ReleaseCard({ release }: { release: Release }) {
   return (
     <Link
       to={`/music/${release.id}`}
@@ -17,8 +16,8 @@ export default function ReleaseCard({ release, index }: { release: Release; inde
           className="aspect-square w-full object-cover grayscale-[15%] transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/80 via-void/0 to-void/0" />
-        <span className="absolute left-3 top-3 font-heading text-xs tracking-[0.2em] text-sand">
-          {numerals[index] ?? index + 1}
+        <span className="absolute left-3 top-3 font-heading text-xs uppercase tracking-[0.2em] text-sand">
+          {releaseLabel(release)}
         </span>
       </div>
       <div className="mt-4 flex items-baseline justify-between gap-3 border-b border-transparent pb-1 group-hover:border-gold/50">

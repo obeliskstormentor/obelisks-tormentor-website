@@ -19,7 +19,7 @@ export default function Music() {
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3">
           {releases.map((r, i) => (
             <Reveal key={r.id} delay={i * 80}>
-              <ReleaseCard release={r} index={i} />
+              <ReleaseCard release={r} />
             </Reveal>
           ))}
           <Reveal delay={releases.length * 80}>
