@@ -66,6 +66,12 @@ export default function Listening() {
       if (res.status === 503) throw new Error("This session is not open yet.")
       if (res.status === 429) throw new Error("Too many attempts. Try again later.")
       if (!res.ok) throw new Error("This link is not valid, or it has expired.")
+      // A 200 that is not JSON means the asset layer answered instead of the
+      // Worker — a routing misconfiguration, not a bad code. Say so plainly
+      // rather than blaming the listener's link.
+      if (!(res.headers.get("Content-Type") || "").includes("application/json")) {
+        throw new Error("Server misconfigured — the listening API is not reachable.")
+      }
       const s = (await res.json()) as Session
       setDaysLeft(Math.max(0, Math.ceil((s.expires - Date.now()) / 86400000)))
       setSession(s)

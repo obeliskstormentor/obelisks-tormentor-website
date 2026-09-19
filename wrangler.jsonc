@@ -8,7 +8,12 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    // Without this the Worker never runs for the API. Assets are served first,
+    // and in single-page-application mode the asset layer answers *every*
+    // unmatched path with index.html — so POST /api/listening/session came back
+    // as HTML with a 200, and the page failed trying to parse it as JSON.
+    "run_worker_first": ["/api/*"]
   },
   // Holds both the invitations and the audio itself (under an "audio:" prefix).
   // R2 would be the better store, but enabling it requires a payment method on
