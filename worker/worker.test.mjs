@@ -17,10 +17,15 @@ const AUDIO = readFileSync(new URL("../.cache/private-audio/new-fragment.mp3", i
 const TRACK = "unreleased/new-fragment.mp3"
 const OTHER = "unreleased/something-else.mp3"
 
-function makeKV(seed = {}) {
+function makeKV(seed = {}, blobs = {}) {
   const map = new Map(Object.entries(seed))
+  const bin = new Map(Object.entries(blobs))
   return {
-    async get(k) {
+    async get(k, type) {
+      if (type === "arrayBuffer") {
+        const b = bin.get(k)
+        return b ? b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) : null
+      }
       return map.has(k) ? map.get(k) : null
     },
     async put(k, v) {
@@ -30,16 +35,16 @@ function makeKV(seed = {}) {
   }
 }
 
+// mirrors the shape of a real R2 object closely enough for this Worker
 const R2 = {
-  async get(key, opts) {
+  async get(key) {
     if (key !== TRACK) return null
-    const size = AUDIO.length
-    if (opts?.range) {
-      const off = opts.range.offset ?? 0
-      const len = opts.range.length ?? size - off
-      return { body: AUDIO.subarray(off, off + len), size, range: { offset: off, length: len } }
+    return {
+      size: AUDIO.length,
+      async arrayBuffer() {
+        return AUDIO.buffer.slice(AUDIO.byteOffset, AUDIO.byteOffset + AUDIO.byteLength)
+      },
     }
-    return { body: AUDIO, size, range: undefined }
   },
 }
 
@@ -60,7 +65,7 @@ function env(overrides = {}) {
       "invite:NOTYOURS": JSON.stringify({
         name: "Other", expires: Date.now() + 86400000, tracks: [OTHER],
       }),
-    }),
+    }, { [`audio:${TRACK}`]: AUDIO }),
     SESSION_SECRET: "test-secret-value",
     ...overrides,
   }
@@ -170,6 +175,38 @@ console.log("\nlistening room")
     new Request(`https://x.test/api/listening/stream/${encodeURIComponent(TRACK)}`,
       { headers: { Cookie: `otl_session=${VALID}.${Date.now() + 1e6}.deadbeef` } }), e)
   check("forged cookie rejected", forged.status === 401, `got ${forged.status}`)
+}
+
+// --- KV-only backend: the configuration actually deployed ------------------
+{
+  const e = env({ PRIVATE_AUDIO: undefined })
+  const { res, cookie } = await openSession(e, VALID)
+  check("session opens without R2", res.status === 200, `got ${res.status}`)
+
+  const url = `https://x.test/api/listening/stream/${encodeURIComponent(TRACK)}`
+  const ok = await worker.fetch(new Request(url, { headers: { Cookie: cookie } }), e)
+  const bytes = new Uint8Array(await ok.arrayBuffer())
+  check("audio served from KV", ok.status === 200, `got ${ok.status}`)
+  check("KV file intact", bytes.length === AUDIO.length && bytes[0] === AUDIO[0] && bytes[bytes.length - 1] === AUDIO[AUDIO.length - 1])
+
+  const ranged = await worker.fetch(
+    new Request(url, { headers: { Cookie: cookie, Range: "bytes=1000-1999" } }), e)
+  const rb = new Uint8Array(await ranged.arrayBuffer())
+  check("KV range sliced correctly", ranged.status === 206 && rb.length === 1000, `${ranged.status} ${rb.length}`)
+  check("KV range bytes match the source", rb.every((b, i) => b === AUDIO[1000 + i]))
+
+  const open = await worker.fetch(
+    new Request(url, { headers: { Cookie: cookie, Range: "bytes=2000-" } }), e)
+  check("open-ended range works", open.status === 206 && open.headers.get("Content-Range") === `bytes 2000-${AUDIO.length - 1}/${AUDIO.length}`, open.headers.get("Content-Range"))
+
+  const bad = await worker.fetch(
+    new Request(url, { headers: { Cookie: cookie, Range: `bytes=${AUDIO.length + 50}-` } }), e)
+  check("out-of-bounds range rejected with 416", bad.status === 416, `got ${bad.status}`)
+
+  const missing = await worker.fetch(
+    new Request(`https://x.test/api/listening/stream/${encodeURIComponent(OTHER)}`,
+      { headers: { Cookie: cookie } }), e)
+  check("unknown track still 403 (not on invite)", missing.status === 403, `got ${missing.status}`)
 }
 
 // --- brute force ----------------------------------------------------------

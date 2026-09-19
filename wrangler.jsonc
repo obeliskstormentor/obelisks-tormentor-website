@@ -1,26 +1,28 @@
 {
   "name": "obelisks-tormentor-website",
   "compatibility_date": "2026-09-09",
-  // The Worker now fronts the static assets so /api/listening/* can be handled
-  // before anything is served. Unreleased audio lives in the private R2 bucket
-  // below and never in ./dist, which is world-readable once deployed.
+  // The Worker fronts the static assets so /api/listening/* is handled before
+  // anything is served. Unreleased audio lives in KV and never in ./dist, which
+  // is world-readable the moment it deploys.
   "main": "worker/index.ts",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
-  // Commented out until the bucket and namespace actually exist in the account.
-  // Deploying with a binding that points at nothing fails the whole deploy, and
-  // since this Worker now serves every page, that would block all site updates.
-  // Un-comment both blocks after running the commands in PANDUAN.md, and paste
-  // the printed namespace id over the placeholder below.
+  // Holds both the invitations and the audio itself (under an "audio:" prefix).
+  // R2 would be the better store, but enabling it requires a payment method on
+  // the account even within the free tier; KV needs neither, and its 25 MB
+  // per-value limit is several times what a 128 kbps preview takes.
+  "kv_namespaces": [
+    { "binding": "INVITES", "id": "94bbfda9ddf74ec99dfecdfaafbec25d" }
+  ]
+  // If R2 is ever enabled, add the block below and the Worker prefers it
+  // automatically — no code change, and existing KV audio keeps working:
   //
   // "r2_buckets": [
   //   { "binding": "PRIVATE_AUDIO", "bucket_name": "obelisk-private-audio" }
-  // ],
-  // "kv_namespaces": [
-  //   { "binding": "INVITES", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
   // ]
+  //
   // SESSION_SECRET is set with `wrangler secret put SESSION_SECRET`, never here.
 }

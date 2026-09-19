@@ -25,7 +25,38 @@ interface Env {
 }
 
 function configured(env: Env) {
-  return Boolean(env.INVITES && env.PRIVATE_AUDIO && env.SESSION_SECRET)
+  // Audio can come from either backend, so KV alone is enough to run.
+  return Boolean(env.INVITES && env.SESSION_SECRET)
+}
+
+/**
+ * Audio storage has two backends.
+ *
+ * R2 is the better one — it streams, and it supports ranges natively. But
+ * enabling R2 requires a payment method on the account even inside the free
+ * tier, so KV is the default: it is already enabled, costs nothing, and holds
+ * values up to 25 MB, which a 128 kbps preview fits inside several times over.
+ *
+ * The cost of KV is that the whole object is read into the Worker before a byte
+ * is returned, and ranges have to be sliced by hand below. At preview bitrates
+ * that is a few MB and well within the memory limit; it is not something to do
+ * with a WAV master, which should never be up here anyway.
+ */
+async function loadAudio(env: Env, key: string): Promise<
+  { bytes: Uint8Array } | { stream: ReadableStream; size: number; offset: number; length: number } | null
+> {
+  if (env.PRIVATE_AUDIO) {
+    const obj = await env.PRIVATE_AUDIO.get(key)
+    if (obj) {
+      const buf = new Uint8Array(await obj.arrayBuffer())
+      return { bytes: buf }
+    }
+  }
+  if (env.INVITES) {
+    const buf = await env.INVITES.get(`audio:${key}`, "arrayBuffer")
+    if (buf) return { bytes: new Uint8Array(buf) }
+  }
+  return null
 }
 
 interface Invite {
@@ -144,42 +175,39 @@ async function stream(req: Request, env: Env, key: string) {
   const invite = await getInvite(env, code)
   if (!invite || !invite.tracks.includes(key)) return json({ error: "forbidden" }, 403)
 
-  // Range matters: without it the browser cannot seek, and Safari will not
-  // start playback at all.
-  const range = req.headers.get("Range")
-  let opts: R2GetOptions | undefined
-  let start = 0
-  let end: number | undefined
-  if (range) {
-    const m = /bytes=(\d*)-(\d*)/.exec(range)
-    if (m) {
-      start = m[1] ? Number(m[1]) : 0
-      end = m[2] ? Number(m[2]) : undefined
-      opts = { range: { offset: start, length: end !== undefined ? end - start + 1 : undefined } }
-    }
-  }
+  const loaded = await loadAudio(env, key)
+  if (!loaded || !("bytes" in loaded)) return json({ error: "not found" }, 404)
 
-  const obj = await env.PRIVATE_AUDIO!.get(key, opts)
-  if (!obj) return json({ error: "not found" }, 404)
-
-  const size = obj.size
+  const bytes = loaded.bytes
+  const size = bytes.length
   const headers = new Headers({
     "Content-Type": "audio/mpeg",
     "Cache-Control": "private, no-store",
     "Accept-Ranges": "bytes",
-    // keep it out of search engines and previews
+    // keep it out of search engines and link previews
     "X-Robots-Tag": "noindex, nofollow, noarchive",
     "Content-Disposition": "inline",
   })
-  if (range && obj.range) {
-    const off = (obj.range as { offset: number }).offset ?? 0
-    const len = (obj.range as { length: number }).length ?? size - off
-    headers.set("Content-Range", `bytes ${off}-${off + len - 1}/${size}`)
-    headers.set("Content-Length", String(len))
-    return new Response(obj.body, { status: 206, headers })
+
+  // Range matters: without it the listener cannot seek, and Safari refuses to
+  // start playback at all. KV has no native ranges, so slice it here.
+  const range = req.headers.get("Range")
+  const m = range ? /bytes=(\d*)-(\d*)/.exec(range) : null
+  if (m) {
+    const start = m[1] ? Number(m[1]) : 0
+    const end = m[2] ? Math.min(Number(m[2]), size - 1) : size - 1
+    if (!Number.isFinite(start) || start >= size || start > end) {
+      headers.set("Content-Range", `bytes */${size}`)
+      return new Response(null, { status: 416, headers })
+    }
+    const slice = bytes.subarray(start, end + 1)
+    headers.set("Content-Range", `bytes ${start}-${end}/${size}`)
+    headers.set("Content-Length", String(slice.length))
+    return new Response(slice, { status: 206, headers })
   }
+
   headers.set("Content-Length", String(size))
-  return new Response(obj.body, { status: 200, headers })
+  return new Response(bytes, { status: 200, headers })
 }
 
 export default {
