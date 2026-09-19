@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local scratch
+.cache
+.wrangler
+
+# Unreleased audio must never be committed. Private tracks belong in the R2
+# bucket (see worker/PANDUAN.md); anything under public/ is served to the
+# whole internet the moment it deploys.
+public/**/*.wav
+public/**/*.flac
+public/**/*.aiff
+private/
+*.unreleased.*

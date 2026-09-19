@@ -25,6 +25,25 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation()
+  // The listening session renders without the site chrome: it is sent to one
+  // person as a document, and a nav bar invites them to wander off into the
+  // public site instead of listening.
+  const bare = pathname.startsWith("/listen")
+
+  if (bare) {
+    return (
+      <>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/listen/:slug" element={<Listening />} />
+          <Route path="/listen" element={<Listening />} />
+          <Route path="/listening" element={<Listening />} />
+        </Routes>
+      </>
+    )
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <ScrollToTop />
@@ -40,7 +59,6 @@ export default function App() {
           <Route path="/merch" element={<Merch />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/epk" element={<EPK />} />
-          <Route path="/listening" element={<Listening />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

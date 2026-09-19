@@ -1,24 +1,44 @@
-import { useEffect, useRef, useState } from "react"
-
-import DustParticles from "../components/DustParticles"
-import Reveal from "../components/Reveal"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 
 /**
- * Private listening room.
+ * Private listening room — /listen/:slug
  *
- * Nothing here is a security boundary — the Worker is. This page only ever
- * holds a session cookie it cannot read (HttpOnly) and audio URLs that return
- * 403 without one, so viewing source gains an attacker nothing.
+ * Deliberately bare: no site header, no footer, no navigation. It should read
+ * as a document sent to one person, not as a page of the public site.
+ *
+ * The code normally arrives in the link (?k=…) so the recipient clicks once and
+ * it plays — a label A&R will not type an access code. The typed form is only a
+ * fallback for when the link has been split from the code on purpose.
+ *
+ * Nothing here is a security boundary; the Worker is. This page only holds a
+ * session cookie it cannot read (HttpOnly) and audio URLs that 403 without one.
  */
 
 type Track = { id: string; title: string }
 type Session = { name: string; expires: number; tracks: Track[] }
 
+/**
+ * Declared at module level on purpose. Defined inside the component it would be
+ * a new component type on every render, so React would unmount and remount the
+ * subtree — including the <audio> element, which stops playback dead.
+ */
+function Frame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-void px-6 py-16 sm:px-8">
+      <div className="mx-auto max-w-lg">{children}</div>
+    </div>
+  )
+}
+
 export default function Listening() {
+  const [params] = useSearchParams()
   const [code, setCode] = useState("")
   const [session, setSession] = useState<Session | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [busy, setBusy] = useState(false)
+  // starts true when the link carries a code, so the first paint is already the
+  // "Opening…" state rather than a code form that flashes and disappears
+  const [busy, setBusy] = useState(() => params.has("k"))
   const [playing, setPlaying] = useState<string | null>(null)
   const [daysLeft, setDaysLeft] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -27,26 +47,25 @@ export default function Listening() {
     document.title = "Private Listening — Obelisk's Tormentor"
     const meta = document.createElement("meta")
     meta.name = "robots"
-    meta.content = "noindex, nofollow"
+    meta.content = "noindex, nofollow, noarchive"
     document.head.appendChild(meta)
     return () => {
       document.head.removeChild(meta)
     }
   }, [])
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault()
+  const open = useCallback(async (value: string) => {
     setBusy(true)
     setError(null)
     try {
       const res = await fetch("/api/listening/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code: value }),
       })
-      if (res.status === 503) throw new Error("The chamber is not open yet.")
+      if (res.status === 503) throw new Error("This session is not open yet.")
       if (res.status === 429) throw new Error("Too many attempts. Try again later.")
-      if (!res.ok) throw new Error("That code is not valid, or it has expired.")
+      if (!res.ok) throw new Error("This link is not valid, or it has expired.")
       const s = (await res.json()) as Session
       setDaysLeft(Math.max(0, Math.ceil((s.expires - Date.now()) / 86400000)))
       setSession(s)
@@ -55,7 +74,17 @@ export default function Listening() {
     } finally {
       setBusy(false)
     }
-  }
+  }, [])
+
+  // code carried in the link: open straight away, then strip it from the address
+  // bar so it does not end up in a screenshot or a shared URL
+  useEffect(() => {
+    const k = params.get("k")
+    if (k) {
+      void open(k)
+      window.history.replaceState({}, "", window.location.pathname)
+    }
+  }, [params, open])
 
   function play(t: Track) {
     const el = audioRef.current
@@ -72,110 +101,106 @@ export default function Listening() {
 
   if (!session) {
     return (
-      <section className="relative overflow-hidden px-6 py-24 sm:px-8">
-        <DustParticles count={14} />
-        <div className="relative mx-auto max-w-md">
-          <Reveal>
-            <h1 className="text-center text-3xl sm:text-4xl">The Chamber</h1>
-            <p className="mt-4 text-center text-parchment-dim">
-              Private listening. Access by invitation only.
-            </p>
-            <form onSubmit={submit} className="mt-12">
-              <label
-                htmlFor="code"
-                className="block text-xs uppercase tracking-[0.3em] text-sand"
-              >
-                Invitation code
-              </label>
-              <input
-                id="code"
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                autoComplete="off"
-                spellCheck={false}
-                placeholder="XXXX-XXXX"
-                className="mt-3 w-full border border-stone/60 bg-charcoal px-4 py-3 font-heading tracking-[0.2em] text-parchment outline-none focus:border-gold/60"
-              />
-              {error && <p className="mt-3 text-sm text-blood-bright">{error}</p>}
-              <button
-                type="submit"
-                disabled={busy || code.length < 6}
-                className="mt-6 w-full border border-gold/50 px-4 py-3 text-xs uppercase tracking-[0.3em] text-gold transition hover:bg-gold/10 disabled:opacity-40"
-              >
-                {busy ? "Opening…" : "Enter"}
-              </button>
-            </form>
-            <p className="mt-10 text-center text-xs leading-relaxed text-sand">
-              Every entry is recorded against the code used.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <Frame>
+        <p className="text-xs uppercase tracking-[0.35em] text-sand">Obelisk&rsquo;s Tormentor</p>
+        <h1 className="mt-6 font-heading text-3xl tracking-wide text-parchment">
+          Private Listening Session
+        </h1>
+        {busy ? (
+          <p className="mt-10 text-sm text-parchment-dim">Opening…</p>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void open(code)
+            }}
+            className="mt-10"
+          >
+            <label htmlFor="code" className="block text-xs uppercase tracking-[0.3em] text-sand">
+              Access code
+            </label>
+            <input
+              id="code"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="XXXX-XXXX"
+              className="mt-3 w-full border border-stone/60 bg-charcoal px-4 py-3 font-heading tracking-[0.2em] text-parchment outline-none focus:border-gold/60"
+            />
+            {error && <p className="mt-3 text-sm text-blood-bright">{error}</p>}
+            <button
+              type="submit"
+              disabled={code.length < 6}
+              className="mt-6 w-full border border-gold/50 px-4 py-3 text-xs uppercase tracking-[0.3em] text-gold transition hover:bg-gold/10 disabled:opacity-40"
+            >
+              Enter
+            </button>
+          </form>
+        )}
+        {error && busy === false && !code && (
+          <p className="mt-6 text-sm text-blood-bright">{error}</p>
+        )}
+      </Frame>
     )
   }
 
-  // computed once per session rather than on every render: Date.now() in the
-  // render body makes the output unstable across re-renders
-  const days = daysLeft
-
   return (
-    <section className="relative overflow-hidden px-6 py-20 sm:px-8">
-      <DustParticles count={16} />
-      <div className="relative mx-auto max-w-2xl">
-        <Reveal>
-          <h1 className="text-3xl sm:text-4xl">The Chamber</h1>
-          <p className="mt-4 text-parchment-dim">
-            Opened for <span className="text-parchment">{session.name}</span>. Access ends in{" "}
-            {days} day{days === 1 ? "" : "s"}.
-          </p>
-          <div className="mt-6 border border-blood/40 bg-void/60 px-4 py-3 text-xs leading-relaxed text-parchment-dim">
-            Unreleased material. Do not share, record, or redistribute. This session is logged
-            against your invitation code.
-          </div>
-        </Reveal>
+    <Frame>
+      <p className="text-xs uppercase tracking-[0.35em] text-sand">Obelisk&rsquo;s Tormentor</p>
+      <h1 className="mt-4 font-heading text-4xl tracking-wide text-parchment">Album II</h1>
+      <p className="mt-2 font-body text-lg italic text-parchment-dim">
+        Private Listening Session
+      </p>
 
-        <ul className="mt-12 divide-y divide-stone/40 border-y border-stone/40">
-          {session.tracks.map((t, i) => (
-            <Reveal key={t.id} delay={i * 70}>
-              <li className="flex items-center gap-4 py-4">
-                <button
-                  onClick={() => play(t)}
-                  aria-label={playing === t.id ? `Pause ${t.title}` : `Play ${t.title}`}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center border border-gold/50 text-gold transition hover:bg-gold/10"
-                >
-                  {playing === t.id ? "❚❚" : "▶"}
-                </button>
-                <span className="font-heading tracking-wide text-parchment">{t.title}</span>
-                <span className="ml-auto text-xs uppercase tracking-[0.2em] text-sand">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </li>
-            </Reveal>
-          ))}
-        </ul>
+      <ol className="mt-12 space-y-1">
+        {session.tracks.map((t, i) => (
+          <li key={t.id}>
+            <button
+              onClick={() => play(t)}
+              className="group flex w-full items-baseline gap-4 py-3 text-left transition hover:text-gold"
+            >
+              <span className="w-8 shrink-0 font-heading text-sm text-sand">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span
+                className={`font-heading uppercase tracking-[0.12em] ${
+                  playing === t.id ? "text-gold" : "text-parchment group-hover:text-gold"
+                }`}
+              >
+                {t.title}
+              </span>
+              <span className="ml-auto text-xs uppercase tracking-[0.2em] text-sand opacity-0 transition group-hover:opacity-100">
+                {playing === t.id ? "Pause" : "Play"}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
 
-        {/* controlsList and the disabled context menu only discourage the casual
-            save — the real protection is that this URL 403s without the cookie. */}
-        <audio
-          ref={audioRef}
-          controls
-          controlsList="nodownload noplaybackrate"
-          onContextMenu={(e) => e.preventDefault()}
-          onEnded={() => setPlaying(null)}
-          className="mt-10 w-full"
-        />
+      {/* controlsList and the blocked context menu only discourage a casual save;
+          the URL itself 403s without the session cookie. */}
+      <audio
+        ref={audioRef}
+        controls
+        controlsList="nodownload noplaybackrate"
+        onContextMenu={(e) => e.preventDefault()}
+        onEnded={() => setPlaying(null)}
+        className="mt-10 w-full"
+      />
+      {error && <p className="mt-4 text-sm text-blood-bright">{error}</p>}
 
-        <button
-          onClick={async () => {
-            await fetch("/api/listening/logout", { method: "POST" })
-            setSession(null)
-            setCode("")
-          }}
-          className="mt-10 text-xs uppercase tracking-[0.3em] text-sand transition hover:text-gold"
-        >
-          Leave the chamber
-        </button>
+      <p className="mt-14 text-sm font-medium text-parchment-dim">
+        For label / management / industry consideration
+      </p>
+
+      <div className="mt-6 border-t border-stone/50 pt-6 text-xs leading-relaxed text-sand">
+        Prepared for {session.name}. Access ends in {daysLeft} day
+        {daysLeft === 1 ? "" : "s"}.
+        <br />
+        Unreleased material — please do not share, record or redistribute. This session is
+        logged against the link you were sent.
       </div>
-    </section>
+    </Frame>
   )
 }

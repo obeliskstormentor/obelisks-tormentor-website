@@ -11,7 +11,8 @@
     "cf:login": "wrangler login",
     "cf:setup": "wrangler r2 bucket create obelisk-private-audio && wrangler kv namespace create INVITES",
     "cf:secret": "wrangler secret put SESSION_SECRET",
-    "cf:dev": "wrangler dev"
+    "cf:dev": "wrangler dev",
+    "test:worker": "esbuild worker/index.ts --bundle --format=esm --outfile=.cache/worker.mjs --platform=neutral && node worker/worker.test.mjs"
   },
   "dependencies": {
     "js-yaml": "^5.4.1",
