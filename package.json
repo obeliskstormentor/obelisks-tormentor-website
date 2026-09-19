@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cf:login": "wrangler login",
+    "cf:setup": "wrangler r2 bucket create obelisk-private-audio && wrangler kv namespace create INVITES",
+    "cf:secret": "wrangler secret put SESSION_SECRET",
+    "cf:dev": "wrangler dev"
   },
   "dependencies": {
     "js-yaml": "^5.4.1",
@@ -16,6 +20,7 @@
     "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260919.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.13.3",
@@ -27,6 +32,7 @@
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "wrangler": "^4.135.0"
   }
 }

@@ -6,6 +6,9 @@ import Band from "./pages/Band"
 import Contact from "./pages/Contact"
 import EPK from "./pages/EPK"
 import Home from "./pages/Home"
+// Deliberately not linked from the header or footer: the chamber is reached
+// only through an invitation link.
+import Listening from "./pages/Listening"
 import Lore from "./pages/Lore"
 import Media from "./pages/Media"
 import Merch from "./pages/Merch"
@@ -37,6 +40,7 @@ export default function App() {
           <Route path="/merch" element={<Merch />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/epk" element={<EPK />} />
+          <Route path="/listening" element={<Listening />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
