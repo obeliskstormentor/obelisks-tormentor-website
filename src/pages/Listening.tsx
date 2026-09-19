@@ -154,7 +154,9 @@ export default function Listening() {
   return (
     <Frame>
       <p className="text-xs uppercase tracking-[0.35em] text-sand">Obelisk&rsquo;s Tormentor</p>
-      <h1 className="mt-4 font-heading text-4xl tracking-wide text-parchment">Album II</h1>
+      {/* One line to change per record. Artifact numbering counts albums only:
+          I = Glyph, II = the October 2026 album, III = this one. */}
+      <h1 className="mt-4 font-heading text-4xl tracking-wide text-parchment">Artifact III</h1>
       <p className="mt-2 font-body text-lg italic text-parchment-dim">
         Private Listening Session
       </p>

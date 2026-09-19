@@ -1,6 +1,6 @@
 # Panduan Ruang Dengar Privat
 
-Halaman: `/listen/album-ii` — tidak tertaut dari mana pun di situs.
+Halaman: `/listen/artifact-iii` — tidak tertaut dari mana pun di situs.
 
 **Aturan yang jadi alasan seluruh sistem ini ada: lagu belum rilis tidak pernah
 masuk folder `public/`.** Semua isi `public/` disalin ke `dist/` dan disajikan ke
@@ -105,7 +105,7 @@ Jalankan perintah `npx wrangler kv key put ...` yang tadi tercetak, lalu kirim
 tautannya:
 
 ```
-https://obelisks-tormentor-website.workers.dev/listen/album-ii?k=XXXX-XXXX
+https://obelisks-tormentor-website.obeliskstormentordc666.workers.dev/listen/artifact-iii?k=XXXX-XXXX
 ```
 
 Penerima cukup klik — tidak ada yang perlu diketik. Kodenya langsung dihapus
