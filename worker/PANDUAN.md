@@ -113,6 +113,39 @@ dari address bar begitu halaman terbuka.
 
 ---
 
+### Mengundang banyak orang sekaligus
+
+Untuk 20 label, jangan ulangi Langkah 6–7 dua puluh kali.
+
+**1.** Buat file teks biasa, misalnya `daftar-label.txt`, satu nama per baris:
+
+```
+Label A — Budi
+Label B
+Label C — A&R
+```
+
+Baris kosong dan baris yang diawali `#` diabaikan. Nama tidak boleh kembar —
+kalau dua orang dari label yang sama, bedakan namanya.
+
+**2.** Buat semua kodenya dengan satu perintah:
+
+```bash
+cd "C:\Users\AXIOO\Documents\CLAUDE CODE\obelisk-tormentor" && node tools/mint_invites_batch.mjs daftar-label.txt 14 unreleased/new-fragment.mp3
+```
+
+**3.** Script mencetak **satu** perintah `npx wrangler kv bulk put ...`.
+Jalankan itu di folder `website/future` — dua puluh undangan aktif sekaligus.
+
+**4.** Buka file `links-....txt` yang disebut script. Isinya nama + tautan
+masing-masing, tinggal salin satu per satu ke orangnya.
+
+Setiap orang tetap dapat kode sendiri, jadi Bagian 5 (mengawasi dan mencabut)
+tetap berlaku per orang. File-file ini ada di `.cache/invites/`, tidak ikut
+ter-commit.
+
+---
+
 ## BAGIAN 5 — Mengawasi
 
 ```bash

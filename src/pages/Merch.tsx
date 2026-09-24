@@ -8,14 +8,12 @@ const merch = [
   {
     name: "Savior Complex",
     image: "/images/merch/tshirt-savior-complex.jpg",
-    price: "Rp130.000",
   },
   {
     // Replaces the Inventia back view, which showed the same shirt as the entry
     // below it from the other side rather than a second product.
     name: "Savior Complex — Long Sleeve",
     image: "/images/merch/longsleeve-savior-complex.jpg",
-    material: "Cotton Combed 24s Premium, sablon",
   },
   {
     name: "Inventia Hominum",
@@ -50,8 +48,6 @@ export default function Merch() {
                 </span>
               </div>
               <h2 className="mt-4 font-heading text-lg">{item.name}</h2>
-              {item.material && <p className="mt-1 text-sm text-parchment-dim">{item.material}</p>}
-              {item.price && <p className="mt-1 text-sm text-sand">{item.price}</p>}
             </Reveal>
           ))}
         </div>
