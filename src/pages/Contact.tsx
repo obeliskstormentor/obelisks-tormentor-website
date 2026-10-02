@@ -9,14 +9,29 @@ export default function Contact() {
       <DustParticles count={16} />
       <Reveal className="relative mx-auto max-w-xl">
         <h1 className="text-3xl sm:text-4xl">Contact</h1>
-        {band.contactEmail && (
-          <a
-            href={`mailto:${band.contactEmail}`}
-            className="mt-8 inline-block font-body text-lg text-parchment-dim underline-offset-8 hover:text-gold hover:underline"
-          >
-            {band.contactEmail}
-          </a>
-        )}
+        {/* Labels only -- the address and number stay off the page by request.
+            They are still in the link targets, which is unavoidable for a link
+            that opens the mail app or WhatsApp. */}
+        <div className="mt-10 flex items-center justify-center gap-10">
+          {band.contactEmail && (
+            <a
+              href={`mailto:${band.contactEmail}`}
+              className="font-heading text-sm uppercase tracking-[0.3em] text-parchment-dim underline-offset-8 transition-colors hover:text-gold hover:underline"
+            >
+              Email
+            </a>
+          )}
+          {band.contactWhatsApp && (
+            <a
+              href={`https://wa.me/${band.contactWhatsApp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-heading text-sm uppercase tracking-[0.3em] text-parchment-dim underline-offset-8 transition-colors hover:text-gold hover:underline"
+            >
+              WhatsApp
+            </a>
+          )}
+        </div>
         <div className="mt-12">
           <SocialLinks className="justify-center" />
         </div>

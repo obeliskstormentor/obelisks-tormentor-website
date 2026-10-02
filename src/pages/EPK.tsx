@@ -103,8 +103,25 @@ export default function EPK() {
         <Reveal delay={240} className="mt-16">
           <h2 className="text-sm uppercase tracking-[0.3em] text-sand">Contact</h2>
           <div className="mt-6 space-y-2 font-body text-lg text-parchment-dim">
-            {band.contactEmail && <p>{band.contactEmail}</p>}
-            <p>WhatsApp: +62 895-0273-7711</p>
+            {band.contactEmail && (
+              <p>
+                <a href={`mailto:${band.contactEmail}`} className="hover:text-gold hover:underline">
+                  Email
+                </a>
+              </p>
+            )}
+            {band.contactWhatsApp && (
+              <p>
+                <a
+                  href={`https://wa.me/${band.contactWhatsApp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold hover:underline"
+                >
+                  WhatsApp
+                </a>
+              </p>
+            )}
             <p>{band.links.bandcamp}</p>
           </div>
         </Reveal>

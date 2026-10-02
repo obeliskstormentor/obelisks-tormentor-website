@@ -53,4 +53,6 @@ export interface BandInfo {
   members: Member[]
   links: BandLinks
   contactEmail?: string
+  /** international format, digits only, for https://wa.me/<number> */
+  contactWhatsApp?: string
 }

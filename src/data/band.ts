@@ -46,4 +46,7 @@ Fac Fixum Volatile et Volatile Fixum.`,
   },
 
   contactEmail: "obeliskstormentordc666@gmail.com",
+  // Supplied by user 2026-10-02 (+62 895-0273-7711). Shown on the site only as
+  // a "WhatsApp" link, never as the number itself -- user request.
+  contactWhatsApp: "6289502737711",
 }
