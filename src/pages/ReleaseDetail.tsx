@@ -2,6 +2,7 @@ import { Navigate, useParams } from "react-router-dom"
 import DustParticles from "../components/DustParticles"
 import Reveal from "../components/Reveal"
 import TrackList from "../components/TrackList"
+import { band } from "../data/band"
 import { getReleaseById } from "../data/releases"
 
 export default function ReleaseDetail() {
@@ -26,16 +27,30 @@ export default function ReleaseDetail() {
           </p>
           <h1 className="mt-3 text-3xl sm:text-4xl">{release.title}</h1>
 
-          {release.links.bandcamp && (
-            <a
-              href={release.links.bandcamp}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-8 inline-block border border-gold/60 px-6 py-2.5 text-sm uppercase tracking-[0.2em] hover:bg-gold/10 hover:text-gold"
-            >
-              Listen on Bandcamp
-            </a>
-          )}
+          {/* Spotify first: most visitors listen there. Falls back to the band's
+              artist page until per-release Spotify links are supplied. */}
+          <div className="mt-8 flex flex-col items-start gap-3">
+            {(release.links.spotify ?? band.links.spotify) && (
+              <a
+                href={release.links.spotify ?? band.links.spotify}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block border border-gold/60 px-6 py-2.5 text-sm uppercase tracking-[0.2em] hover:bg-gold/10 hover:text-gold"
+              >
+                Listen on Spotify
+              </a>
+            )}
+            {release.links.bandcamp && (
+              <a
+                href={release.links.bandcamp}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block border border-gold/60 px-6 py-2.5 text-sm uppercase tracking-[0.2em] hover:bg-gold/10 hover:text-gold"
+              >
+                Listen on Bandcamp
+              </a>
+            )}
+          </div>
         </div>
       </Reveal>
 

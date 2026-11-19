@@ -8,14 +8,17 @@
  *
  * Release date confirmed by the user 2026-11-14 and shown here at their request;
  * the title and artwork stay off the site until release day.
+ * Title shown from 2026-11-19 at the user's request (announced on Instagram);
+ * the artwork still stays off the site until release day.
  */
 const RELEASE_DATE = "29.11.2026"
+const TITLE = "Forged Beyond Death"
 
 export default function ComingSoonCard({ label = "Artifact II" }: { label?: string }) {
   return (
     <div
       className="group relative block cursor-default select-none"
-      aria-label={`Upcoming release — out ${RELEASE_DATE}`}
+      aria-label={`${TITLE} — out ${RELEASE_DATE}`}
     >
       <div className="relative aspect-square overflow-hidden border border-stone/60 bg-charcoal">
         <img
@@ -33,7 +36,7 @@ export default function ComingSoonCard({ label = "Artifact II" }: { label?: stri
         </div>
       </div>
       <div className="mt-4 flex items-baseline justify-between gap-3 pb-1">
-        <h3 className="font-heading text-lg tracking-wide text-stone-light">???</h3>
+        <h3 className="font-heading text-lg tracking-wide text-parchment">{TITLE}</h3>
         <span className="shrink-0 text-xs uppercase tracking-[0.2em] text-sand/70">{RELEASE_DATE}</span>
       </div>
       {/* Matches ReleaseCard: designation below the art, not over it. Dimmed
