@@ -147,6 +147,7 @@ RESILIENT AB INFERNO`,
     ],
     links: {
       spotify: "https://open.spotify.com/album/0qOCageU6V5lAjWV2BVMVy",
+      bandcamp: "https://obeliskstormentor.bandcamp.com/album/forged-beyond-death",
     },
   },
 ]
