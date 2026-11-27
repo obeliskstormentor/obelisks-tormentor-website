@@ -1,4 +1,3 @@
-import ComingSoonCard from "../components/ComingSoonCard"
 import DustParticles from "../components/DustParticles"
 import Reveal from "../components/Reveal"
 import ReleaseCard from "../components/ReleaseCard"
@@ -22,9 +21,6 @@ export default function Music() {
               <ReleaseCard release={r} />
             </Reveal>
           ))}
-          <Reveal delay={releases.length * 80}>
-            <ComingSoonCard />
-          </Reveal>
         </div>
       </div>
     </section>

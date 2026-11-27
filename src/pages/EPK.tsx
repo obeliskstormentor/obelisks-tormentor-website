@@ -82,6 +82,31 @@ export default function EPK() {
           </ul>
         </Reveal>
 
+        <Reveal delay={180} className="mt-16">
+          <h2 className="text-sm uppercase tracking-[0.3em] text-sand">Live Highlights</h2>
+          <div className="mt-6 flex flex-col gap-6 border border-stone/60 bg-charcoal/40 p-6 sm:flex-row sm:items-center">
+            <img
+              src="/images/hammerclash-live-curation-2025.jpg"
+              alt="OBELISK'S TORMENTOR selected for Hammerclash Live Curation, Semarang, 23 August 2025"
+              loading="lazy"
+              className="w-full max-w-[200px] self-center border border-stone/60"
+            />
+            <div>
+              <p className="font-heading text-lg tracking-wide text-parchment">Hammerclash Live Curation</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.2em] text-gold">
+                Hammersonic Records &times; Ravel Entertainment
+              </p>
+              <p className="mt-4 font-body text-lg leading-relaxed text-parchment-dim">
+                Selected to perform at the Hammerclash Live Curation &mdash; Semarang, 23 August 2025.
+              </p>
+              <p className="mt-3 font-body text-base leading-relaxed text-sand">
+                Around fifteen shows to date, including Jateng Fair, Semarang, Tegal, Jepara, Blora and
+                Magelang.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal delay={200} className="mt-16">
           <h2 className="text-sm uppercase tracking-[0.3em] text-sand">Discography</h2>
           <ul className="mt-6 space-y-4">

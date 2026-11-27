@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom"
-import ComingSoonCard from "../components/ComingSoonCard"
 import DustParticles from "../components/DustParticles"
 import Reveal from "../components/Reveal"
 import ReleaseCard from "../components/ReleaseCard"
 import { useAmbientAudio } from "../context/useAmbientAudio"
 import { releases } from "../data/releases"
 
-const latest = releases.find((r) => r.id === "savior-complex") ?? releases[0]
+const latest = releases.find((r) => r.id === "forged-beyond-death") ?? releases[0]
 
 export default function Home() {
   const { enable } = useAmbientAudio()
@@ -113,9 +112,6 @@ export default function Home() {
                 <ReleaseCard release={r} />
               </Reveal>
             ))}
-            <Reveal delay={releases.length * 100}>
-              <ComingSoonCard />
-            </Reveal>
           </div>
         </div>
       </section>
