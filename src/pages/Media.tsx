@@ -4,6 +4,7 @@ import Lightbox from "../components/Lightbox"
 import Reveal from "../components/Reveal"
 
 const artworkImages = [
+  { src: "/images/cover-forged-beyond-death.jpg", alt: "Forged Beyond Death cover art" },
   { src: "/images/cover-glyph.jpg", alt: "Glyph cover art" },
   { src: "/images/cover-inventia-hominum.jpg", alt: "Inventia Hominum cover art" },
   { src: "/images/cover-savior-complex.jpg", alt: "Savior Complex cover art" },
