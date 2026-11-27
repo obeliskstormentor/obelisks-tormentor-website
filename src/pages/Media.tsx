@@ -47,8 +47,23 @@ export default function Media() {
         <Reveal delay={40}>
           <h2 className="mt-14 text-xl uppercase tracking-widest text-sand">Artwork</h2>
         </Reveal>
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {artworkImages.map((img, i) => (
+        {/* The newest album is featured large; the earlier releases sit in one row below it. */}
+        <Reveal className="mx-auto mt-6 w-full sm:w-2/3">
+          <button
+            type="button"
+            onClick={() => setActive(0)}
+            className="block w-full outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            <img
+              src={artworkImages[0].src}
+              alt={artworkImages[0].alt}
+              loading="lazy"
+              className="aspect-square w-full border border-gold/40 object-cover transition hover:opacity-90"
+            />
+          </button>
+        </Reveal>
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:gap-4">
+          {artworkImages.map((img, i) => i === 0 ? null : (
             <Reveal key={img.src} delay={i * 60}>
               <button
                 type="button"
